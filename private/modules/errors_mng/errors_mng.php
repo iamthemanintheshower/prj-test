@@ -68,6 +68,20 @@ class errors_mng extends page{
     }
 }
 
+function shutDownFunction($application_configs) { 
+    $error = error_get_last();
+    if ($error['type'] === E_ERROR) { 
+        $date = new DateTime();
+        error_log(
+            '!$error:'.$date->getTimestamp().'|'.print_r($error, true).'|', 3, 
+            $application_configs['ROOT_PATH'].$application_configs['APPLICATION_SLUG'].'/'.$application_configs['PRIVATE_FOLDER_DATA'].
+                $application_configs['PRIVATE_FOLDER_LOGS']."php-exception.log"
+        );
+        die();
+    } 
+}
+register_shutdown_function('shutDownFunction', $application_configs);
+
 set_error_handler('myErrorHandler');
 
 function myErrorHandler($errno, $errstr, $errfile, $errline) {
